@@ -1,0 +1,57 @@
+[gd_scene load_steps=11 format=3 uid="uid://db412wvus4hko"]
+
+[ext_resource type="Script" uid="uid://bh6yl7et2xo0e" path="res://scripts/VoxelTerrain/VoxelMesh.gd" id="1_6lryg"]
+[ext_resource type="PackedScene" uid="uid://ovjvsseil1f" path="res://scenes/player.tscn" id="2_ervn3"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_ervn3"]
+sky_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+ground_horizon_color = Color(0.662243, 0.671743, 0.686743, 1)
+
+[sub_resource type="Sky" id="Sky_sqft2"]
+sky_material = SubResource("ProceduralSkyMaterial_ervn3")
+
+[sub_resource type="Environment" id="Environment_gadlc"]
+background_mode = 2
+sky = SubResource("Sky_sqft2")
+tonemap_mode = 2
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_6lryg"]
+noise_type = 3
+fractal_octaves = 3
+
+[sub_resource type="Gradient" id="Gradient_ervn3"]
+colors = PackedColorArray(0.345098, 0.12549, 0, 1, 0.556863, 1, 0.419608, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_sqft2"]
+frequency = 0.053
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_gadlc"]
+seamless = true
+color_ramp = SubResource("Gradient_ervn3")
+noise = SubResource("FastNoiseLite_sqft2")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ervn3"]
+vertex_color_use_as_albedo = true
+albedo_texture = SubResource("NoiseTexture2D_gadlc")
+uv1_scale = Vector3(0.2, 0.2, 0.2)
+uv1_triplanar = true
+
+[node name="VoxelWorld" type="Node3D"]
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.384891, -0.799308, 0.461481, 2.78059e-08, 0.5, 0.866025, -0.922962, -0.333326, 0.192446, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_gadlc")
+
+[node name="VoxelMesh" type="Node3D" parent="."]
+script = ExtResource("1_6lryg")
+noise_texture = SubResource("FastNoiseLite_6lryg")
+chunk_size = Vector3(32, 32, 32)
+noise_scale = 5.0
+threshold = 0.08
+material = SubResource("StandardMaterial3D_ervn3")
+
+[node name="CharacterBody3D" parent="." instance=ExtResource("2_ervn3")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 18.3028, 24.2113, 41.1424)
